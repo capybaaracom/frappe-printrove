@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"reference_number": "ORD-d2009f0b", "retail_price": 500, "customer": {"name":
+      "John Doe", "email": "johndoe@example.com", "number": 9844654321, "address1":
+      "123 Lane, Area", "pincode": 600001, "state": "Tamil Nadu", "city": "Chennai",
+      "country": "India"}, "order_products": [{"quantity": 1, "variant_id": 22906490,
+      "is_plain": false}], "cod": false}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '350'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.33.1
+    method: POST
+    uri: https://api.printrove.com/api/external/orders
+  response:
+    body:
+      string: '{"status":"failure","message":"It seems like you do not have sufficient
+        credits to place this order","order_cost":327.75}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Cache-Control:
+      - no-cache, private
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 16 May 2026 20:50:26 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '60'
+      X-RateLimit-Remaining:
+      - '55'
+    status:
+      code: 422
+      message: Unprocessable Content
+version: 1

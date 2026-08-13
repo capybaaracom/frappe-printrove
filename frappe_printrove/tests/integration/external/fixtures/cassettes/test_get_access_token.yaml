@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '74'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.33.1
+    method: POST
+    uri: https://api.printrove.com/api/external/token
+  response:
+    body:
+      string: '{"status":"success","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiNmRlNzZjODU3MGMzZDRiNDc3MzRmYTEzM2VhYWU4MzFlODgzMGMzYjkxZWRmODcxZjYxZjVkNmQyODI0NTZjZjE3OGQwZWJhZGUzYTMyYmEiLCJpYXQiOjE3Nzg5NjQ2MTAuOTM4ODE1LCJuYmYiOjE3Nzg5NjQ2MTAuOTM4ODE4LCJleHAiOjE4MTA1MDA2MTAuOTMyMjA4LCJzdWIiOiIxODIzNjQiLCJzY29wZXMiOltdfQ.hAAgiObzmCNbHKZDh_pWwpogdoLqdMhIoWHn5R0IB0eakh_GBtqiBkEBjGz4ybuCkVmfP2geyswAJML4ffUDSg2A1lmqyMfkQuEPXStRxiak5pqkM53lM_OkBroILOaXoTofstgImgS77WSA_SuA4yv6m5D35b4_YM9WyerGoeim9F1TtBeVSla2deB1bQppMRQn2ftr7wlU15DBf2yPsooXf3w2CYlIkWNkLP2asNugu5JcFf182OqpLPItVqByxykXbqAD4CcqeoSx_B3W4Yzw2-1h8QKakEMJwvMa38tqfv4xuSra1VJnacMjMC-mJPb1TpfQLx-QR43UT-WryRy2x17ShI9T5vokaB8aC6Qa3N7q7cwnn6tcnSG7JvjIyDw6zOQPKULjFK1Sz5ooPU92kAfUZQmZ5MCeIxaCH_a41JR5-5kceshR-4pyqgDDu62Dqz4GtnsJzq7VilNiSQjKX7IjFqOEiTJbGlON0te1j7NRpVzHRokOtpz_OMSBuGq48_hAaiTOVfNtO0Gj-RKn7PjEW6ENi5_k6y3P4XaxvwY0dyxfLj6KSDYGK22GJVsEm2UN9HLFESBMsVit7zeNwKHX9Eg31jQz07GiBVYI2B6D6fgSKBLiszA65Xc-5ZFbSUvKmoGwmjht73OWfGJzE3n-NlAXJQ9BvJI7wuc","expires_at":"2027-05-16T20:50:10.000000Z"}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Cache-Control:
+      - no-cache, private
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 16 May 2026 20:50:10 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-RateLimit-Limit:
+      - '60'
+      X-RateLimit-Remaining:
+      - '59'
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

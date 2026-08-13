@@ -1,0 +1,57 @@
+interactions:
+- request:
+    body: '{"name": "Test Product Integration", "product_id": 460, "variants": [{"product_id":
+      264, "sku": "SKU-8a478042"}], "is_plain": true}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.33.1
+    method: POST
+    uri: https://api.printrove.com/api/external/products
+  response:
+    body:
+      string: '{"status":"success","product":{"id":849591,"name":"Test Product Integration","product":{"id":460,"name":"Half
+        Sleeve Round Neck T-Shirt"},"variants":[{"id":23037897,"sku":"SKU-8a478042","product":{"id":264,"name":"White
+        S Men Round","color":"White","size":"S"},"is_plain":true,"design":{"front":null,"back":null},"mockup":null}]}}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Cache-Control:
+      - no-cache, private
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 16 May 2026 20:50:20 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-RateLimit-Limit:
+      - '60'
+      X-RateLimit-Remaining:
+      - '56'
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
