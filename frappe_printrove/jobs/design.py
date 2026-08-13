@@ -2,7 +2,7 @@ import frappe
 
 from frappe_printrove.client import PrintroveClient
 from frappe_printrove.schemas.design import DesignUrlRequest
-from frappe_printrove.utils.image import ensure_supported_image_format
+from frappe_printrove.utils.file import ensure_supported_image_format
 
 
 def create_design(item_code: str) -> str:
