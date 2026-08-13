@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.33.1
+    method: GET
+    uri: https://api.printrove.com/api/external/serviceability?pincode=560001&country=India&cod=false&weight=500
+  response:
+    body:
+      string: '{"status":"success","couriers":[{"id":44,"name":"Delhivery Air","cost":60},{"id":11,"name":"Blue
+        Dart Air","cost":60},{"id":45,"name":"Bluedart Surface","cost":50},{"id":47,"name":"Ekart
+        Surface","cost":50},{"id":17,"name":"Delhivery Surface Standard","cost":75},{"id":46,"name":"Amazon
+        Surface","cost":90}]}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Cache-Control:
+      - no-cache, private
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 16 May 2026 20:50:19 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-RateLimit-Limit:
+      - '60'
+      X-RateLimit-Remaining:
+      - '57'
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

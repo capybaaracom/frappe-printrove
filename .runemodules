@@ -1,0 +1,3 @@
+[runemodule ".agents/rules/printrove-api.md"]
+	url = https://api.printrove.com/docs/
+	path = .agents/rules/printrove-api.md
