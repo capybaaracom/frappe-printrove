@@ -45,3 +45,16 @@ Link to BPMN Behavioral Workflow: [Purchase Order Fulfillment Workflow](../bpmn/
 4. **Credit Verification**: The orchestrator checks available wallet balance via general ledger queries. If insufficient, it suspends until a new `Purchase Invoice` top-up is submitted.
 5. **Printrove Order Creation**: The orchestrator spawns child job `create_order`, sending customer address and item IDs to `POST /api/external/orders`. It records `printrove_order_id`.
 6. **PO Submission**: The orchestrator spawns child job `submit_po`, transitioning the PO to `docstatus = 1` and finalizing the workflow.
+
+---
+
+## 5. Scenario 5: Chart of Accounts & Purchase Invoice Wallet Recharge
+Link to BPMN Behavioral Workflow: [Wallet Credit Accounting & Purchase Invoice Recharge Workflow](../bpmn/05-chart-of-accounts-and-purchase-invoice.md)
+
+### Runtime Interaction & Execution Steps
+1. **Initial Credit Verification Failure**: During Step 3 of the Purchase Order orchestrator, `get_available_credit(po.company)` detects that `GL Balance - Unbilled POs < po.grand_total`.
+2. **Non-blocking Job Suspension**: The FastStream worker calls `frappe.wait_for(event_key="on_submit", filters={"doctype": "Purchase Invoice", "company": po.company, "docstatus": 1})`, saving the job state into `tabFS Job` and unblocking worker threads.
+3. **Finance Team Action**: The finance department posts a payment entry or records an advance recharge by creating and submitting a `Purchase Invoice` linked to supplier `"Printrove"`.
+4. **Ledger Posting**: Submitting the invoice posts `tabGL Entry` records debiting the `Printrove Wallet Credit` asset account (`printrove_credit_account`).
+5. **Event Emission & Resumption**: The `Purchase Invoice on_submit` event satisfies the `FS Match Condition`, automatically promoting and waking up the suspended orchestrator.
+6. **Re-validation & Order Placement**: The orchestrator re-evaluates the wallet credit balance, validates that funds are now sufficient, and seamlessly proceeds to child job `create_order`.
