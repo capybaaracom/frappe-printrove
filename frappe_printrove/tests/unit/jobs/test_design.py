@@ -8,7 +8,7 @@ from frappe_printrove.schemas.design import DesignResponse
 
 class TestJobsDesignUnit(FrappeTestCase):
 	@patch("frappe_printrove.client.PrintroveClient.create_design_from_url")
-	@patch("frappe_printrove.utils.image.ensure_supported_image_format")
+	@patch("frappe_printrove.utils.file.ensure_supported_image_format")
 	def test_create_design_with_file(self, mock_ensure_format, mock_api_create) -> None:
 		item = frappe.get_doc(
 			{
