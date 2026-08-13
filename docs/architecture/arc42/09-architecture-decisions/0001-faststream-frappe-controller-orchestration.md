@@ -1,10 +1,10 @@
-# ADR 0002: FastStream and Frappe-Controller Orchestration
+# ADR 0001: FastStream and Frappe-Controller Orchestration
 
 ## Status
 Accepted
 
 ## Date
-2024-04-11
+2026-08-13
 
 ## Context
 Printrove fulfillment involves multi-step asynchronous lifecycles: waiting for high-resolution artwork uploads, product SKU generation, real-time courier rate calculations, and wallet credit top-ups. Traditional cron jobs or blocking worker threads (`time.sleep()`) lead to thread pool exhaustion, duplicate API calls, and race conditions.

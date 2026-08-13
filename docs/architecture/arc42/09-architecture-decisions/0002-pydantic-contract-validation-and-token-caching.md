@@ -1,10 +1,10 @@
-# ADR 0003: Pydantic Contract Validation and Token Caching
+# ADR 0002: Pydantic Contract Validation and Token Caching
 
 ## Status
 Accepted
 
 ## Date
-2024-04-11
+2026-08-13
 
 ## Context
 Interacting with third-party fulfillment APIs requires strict payload serialization, attribute coercion, and resilient credential management. Unvalidated dynamic payloads risk malformed HTTP requests and downstream dispatch failures. Frequent token authentication calls introduce unnecessary latency and risk hitting rate limits.

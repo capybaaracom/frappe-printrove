@@ -7,7 +7,7 @@ Link to BPMN Behavioral Workflow: [Design Provisioning Workflow](../bpmn/01-desi
 1. An operator or external API creates or updates an `Item` record with `item_group = "Print Files"`.
 2. The [`on_update`](apps/frappe_printrove/frappe_printrove/printrove/doctype/item/item.py:4) document hook schedules `frappe_printrove.jobs.design.create_design` after MariaDB commits.
 3. The worker begins execution. If no file is attached, the job suspends itself cleanly via `frappe.wait_for(event_key="after_insert", filters={"doctype": "File", ...})`.
-4. When a file is uploaded, the worker wakes up and inspects the image format using [`ensure_supported_image_format`](apps/frappe_printrove/frappe_printrove/utils/image.py:9). Unsupported formats (such as WEBP or BMP) are converted in-memory to PNG.
+4. When a file is uploaded, the worker wakes up and inspects the image format using [`ensure_supported_image_format`](apps/frappe_printrove/frappe_printrove/utils/file.py:9). Unsupported formats (such as WEBP or BMP) are converted in-memory to PNG.
 5. The absolute file URL is formatted into [`DesignUrlRequest`](apps/frappe_printrove/frappe_printrove/schemas/design.py:6) and sent to Printrove via `POST /api/external/designs/url`.
 6. The returned design ID is saved into `Item.printrove_id`.
 

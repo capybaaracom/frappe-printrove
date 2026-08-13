@@ -12,12 +12,12 @@ Instead of traditional blocking cron tasks or unmanaged RQ threads, `frappe_prin
 
 ### 2. Pydantic-Powered Contract Verification
 To avoid schema drift or silent serialization failures:
-- Every outbound request and inbound response is strictly validated using Pydantic v2 data models ([`frappe_printrove/schemas/`](apps/frappe_printrove/frappe_printrove/schemas/)).
+- Every outbound request and inbound response is strictly validated using Pydantic v2 data models.
 - All dimensional units, courier identifiers, and shipping payload addresses are verified before dispatch.
 
 ### 3. Transparent Image Transformation Layer
 Printrove requires standard JPEG, JPG, or PNG images. Merchandisers frequently upload diverse image formats:
-- The [`ensure_supported_image_format`](apps/frappe_printrove/frappe_printrove/utils/image.py:9) utility uses Pillow to inspect image headers in-memory.
+- The image sanitization utility uses Pillow to inspect image headers in-memory.
 - Any non-standard format (such as WEBP, BMP, or TIFF) is converted to PNG, saved as a new ERPNext `File` record, and dispatched seamlessly.
 
 ### 4. Financial Safeguards & Dynamic Freight Calculation

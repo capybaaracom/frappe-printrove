@@ -14,7 +14,7 @@ The background processing subsystem utilizes `frappe-controller`'s event orchest
 
 ## 3. Image Processing & Sanitization
 Printrove requires images to be formatted strictly as JPEG, JPG, or PNG.
-- The [`ensure_supported_image_format`](apps/frappe_printrove/frappe_printrove/utils/image.py:9) utility inspects incoming image binary headers using Pillow.
+- The [`ensure_supported_image_format`](apps/frappe_printrove/frappe_printrove/utils/file.py:9) utility inspects incoming image binary headers using Pillow.
 - Unsupported formats (e.g., WEBP, TIFF, BMP) are converted in-memory to standard PNG and re-attached as clean `File` records before external transmission.
 
 ## 4. Financial Validation & Prepaid Accounting

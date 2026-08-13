@@ -97,7 +97,7 @@ erDiagram
     SalesOrderHook ||--|| OrderJob : "enqueues on_submit"
     PurchaseOrderHook ||--|| OrderJob : "enqueues on_update"
     
-    DesignJob ||--|| ImageUtils : "converts format"
+    DesignJob ||--|| FileUtils : "converts format"
     DesignJob ||--|| PrintroveClient : "calls create_design_from_url"
     DesignJob ||--|| DesignUrlRequest : "constructs payload"
     
@@ -112,83 +112,82 @@ erDiagram
     PrintroveClient ||--|| PrintroveSettings : "fetches credentials"
     
     ItemHook {
-        string module "frappe_printrove.printrove.doctype.item.item"
+        string component "Item Lifecycle Hook"
         string event "on_update"
     }
 
     BOMHook {
-        string module "frappe_printrove.printrove.doctype.bom.bom"
+        string component "BOM Lifecycle Hook"
         string event "on_submit"
     }
 
     SalesOrderHook {
-        string module "frappe_printrove.printrove.doctype.sales_order.sales_order"
+        string component "Sales Order Lifecycle Hook"
         string event "on_submit"
     }
 
     PurchaseOrderHook {
-        string module "frappe_printrove.printrove.doctype.purchase_order.purchase_order"
+        string component "Purchase Order Lifecycle Hook"
         string event "on_update"
     }
 
     DesignJob {
-        string function "frappe_printrove.jobs.design.create_design"
+        string task "Design Creation Task"
         int rate_limit_per_minute 60
         int retries 3
     }
 
     ProductJob {
-        string function "frappe_printrove.jobs.product.create_product"
+        string task "Product Configuration Task"
         int rate_limit_per_minute 60
         int retries 3
     }
 
     OrderJob {
-        string orchestrator "frappe_printrove.jobs.order.process_printrove_purchase_order"
-        string helper "frappe_printrove.jobs.order.create_purchase_order"
+        string task "Purchase Order Orchestrator"
         int rate_limit_per_minute 30
         int retries 5
     }
 
-    ImageUtils {
-        string module "frappe_printrove.utils.image"
+    FileUtils {
+        string utility "Image Normalization Engine"
         string function "ensure_supported_image_format"
     }
 
     PrintroveClient {
-        string module "frappe_printrove.client"
-        string class "PrintroveClient"
+        string service "Printrove API Client"
+        string auth "Bearer Token Session Manager"
     }
 
     PrintroveSettings {
-        string doctype "Printrove Settings"
+        string entity "Printrove Settings"
         string role "Configuration & Credential Storage"
     }
 
     DesignUrlRequest {
-        string schema "frappe_printrove.schemas.design.DesignUrlRequest"
+        string contract "Design Ingestion Schema"
     }
 
     ProductCreateRequest {
-        string schema "frappe_printrove.schemas.product.ProductCreateRequest"
+        string contract "Product Creation Schema"
     }
 
     ServiceabilityRequest {
-        string schema "frappe_printrove.schemas.serviceability.ServiceabilityRequest"
+        string contract "Serviceability Query Schema"
     }
 
     OrderCreateRequest {
-        string schema "frappe_printrove.schemas.order.OrderCreateRequest"
+        string contract "Order Placement Schema"
     }
 ```
 
 ### Important Interfaces (Level 2)
 
-1. **[`create_design(item_code: str) -> str`](apps/frappe_printrove/frappe_printrove/jobs/design.py:8)**:
-   - Ingests artwork from `Item`, normalizes image via [`ensure_supported_image_format`](apps/frappe_printrove/frappe_printrove/utils/image.py:9), uploads URL to Printrove, and returns generated design ID.
-2. **[`create_product(bom_name: str) -> str`](apps/frappe_printrove/frappe_printrove/jobs/product.py:8)**:
+1. **Design Provisioning Interface (`create_design`)**:
+   - Ingests artwork from Item, normalizes image formats via FileUtils, uploads URL to Printrove, and returns generated design ID.
+2. **Product Configuration Interface (`create_product`)**:
    - Validates design IDs on BOM components, constructs placement coordinate vectors, registers custom product on Printrove, and returns product ID.
-3. **[`process_printrove_purchase_order(po_name: str) -> str`](apps/frappe_printrove/frappe_printrove/jobs/order.py:141)**:
+3. **Purchase Order Orchestrator (`process_printrove_purchase_order`)**:
    - Orchestrates multi-step procurement: verifies item provisioning, calculates freight rates, checks wallet credit, creates external order, and submits the PO.
-4. **[`PrintroveClient`](apps/frappe_printrove/frappe_printrove/client.py:13)**:
-   - Encapsulates authentication token caching and all HTTP REST operations against `api.printrove.com`.
+4. **Printrove API Client (`PrintroveClient`)**:
+   - Encapsulates authentication token caching and all HTTP REST operations against the external Printrove gateway.
