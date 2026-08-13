@@ -38,12 +38,12 @@ flowchart TD
 
 ## 📝 Workflow Step Descriptions
 
-1. **Start Account Configuration**: The system administrator or finance team configures the Chart of Accounts in `Printrove Settings`.
+1. **Start Account Configuration**: The system administrator or finance team configures the Chart of Accounts in Printrove Settings.
 2. **Map Accounts**: Defines the asset account head (`printrove_credit_account`, e.g., `"Printrove Wallet Credit - Company"`) and the expense/tax head (`shipping_account`, e.g., `"Freight and Forwarding Charges - Company"`).
-3. **Credit Check Trigger**: When a `Purchase Order` is being processed by [`process_printrove_purchase_order`](apps/frappe_printrove/frappe_printrove/jobs/order.py:141), the system calculates available credit.
+3. **Credit Check Trigger**: When a Purchase Order is being processed by the fulfillment orchestrator, the system calculates available credit.
 4. **Compute Available Credit**: Reads `SUM(debit - credit)` from `tabGL Entry` for the credit account and subtracts unbilled amounts from open, submitted Purchase Orders.
 5. **Suspend Orchestrator**: If available balance is less than the PO grand total, the FastStream worker suspends execution non-blockingly via `frappe.wait_for(event_key='on_submit', filters={'doctype': 'Purchase Invoice', 'company': po.company, 'docstatus': 1})`.
-6. **Finance Recharge Action**: The finance department records a top-up transaction or advances payment to Printrove by submitting a `Purchase Invoice` or `Payment Entry`.
+6. **Finance Recharge Action**: The finance department records a top-up transaction or advances payment to Printrove by submitting a Purchase Invoice or Payment Entry.
 7. **Post GL Entries**: MariaDB commits general ledger entries debiting the Printrove Wallet Credit account and crediting the Bank/Cash account.
-8. **FastStream Resumption**: `frappe-controller` catches the `Purchase Invoice on_submit` event, satisfies the deferred job's match condition, and resumes the orchestrator without re-executing already completed sub-tasks.
-9. **Proceed to Fulfillment**: With credit restored, the workflow moves directly to `create_order` and dispatches the job to the Printrove API.
+8. **FastStream Resumption**: The orchestrator engine catches the Purchase Invoice `on_submit` event, satisfies the deferred job's match condition, and resumes the orchestrator without re-executing already completed sub-tasks.
+9. **Proceed to Fulfillment**: With credit restored, the workflow moves directly to order placement and dispatches the job to the Printrove API.

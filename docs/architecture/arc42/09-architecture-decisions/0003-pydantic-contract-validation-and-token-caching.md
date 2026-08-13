@@ -1,4 +1,4 @@
-# ADR 0002: Pydantic Contract Validation and Token Caching
+# ADR 0003: Pydantic Contract Validation and Token Caching
 
 ## Status
 Accepted

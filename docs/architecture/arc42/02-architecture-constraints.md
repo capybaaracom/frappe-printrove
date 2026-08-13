@@ -8,11 +8,11 @@
    - All database interactions must adhere to Frappe ORM and Document lifecycle hooks (`validate`, `on_update`, `on_submit`).
 2. **Frappe Controller & FastStream Queueing**:
    - Direct invocation of background workers or blocking delays (`time.sleep`) is strictly forbidden.
-   - All asynchronous tasks must be registered in [`hooks.py`](apps/frappe_printrove/frappe_printrove/hooks.py:10) under `controller_events` with explicit rate limits and retry counts.
+   - All asynchronous tasks must be registered under controller events configuration with explicit rate limits and retry counts.
    - Multi-step workflows must use `frappe.wait_for` to suspend worker execution cleanly rather than polling database tables or external endpoints.
-   - Replayed workflows must remain deterministic; side effects (such as external HTTP API calls) must be isolated within child jobs (`frappe.enqueue(..., as_child=True)`).
+   - Replayed workflows must remain deterministic; side effects (such as external HTTP API calls) must be isolated within child jobs (`as_child=True`).
 3. **Pydantic Validation**:
-   - All communication with external Printrove REST endpoints must pass through Pydantic v2 schemas located in `frappe_printrove/schemas/`.
+   - All communication with external Printrove REST endpoints must pass through strictly typed Pydantic v2 serialization schemas.
 4. **Image Format & Dimension Standards**:
    - Printrove accepts JPEG, JPG, and PNG formats. Unsupported formats (such as WEBP or TIFF) must be automatically converted in-memory via Pillow before transmission.
 
@@ -26,6 +26,6 @@
 ## Regulatory & Security Constraints
 
 1. **API Credential Protection**:
-   - API tokens and client secrets must never be committed to source control; they must be managed via `Printrove Settings` or `site_config.json`.
+   - API tokens and client secrets must never be hardcoded; they must be managed via encrypted configuration or Printrove Settings.
 2. **GST Compliance**:
    - Downstream purchase orders and item definitions must adhere to Indian GST HSN coding standards (e.g. HSN `999900` or product-specific codes).
