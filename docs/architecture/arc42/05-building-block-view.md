@@ -1,0 +1,194 @@
+# Building Block View
+
+## Whitebox Overall System
+This chapter presents the building blocks of `frappe_printrove`, spanning container infrastructure (Level 1) down to internal code components (Level 2).
+
+Link to C2 Container Model: [C2 Container Diagram](../c4/02-container.md)
+
+### Level 1: Container Architecture
+
+```mermaid
+erDiagram
+    Nginx ||--|| Gunicorn : "HTTP / Reverse Proxy"
+    Gunicorn ||--|| MariaDB : "SQL / MariaDB 10.6+"
+    Gunicorn ||--|| RedisCache : "TCP / In-Memory Cache"
+    Gunicorn ||--o{ RedisQueue : "Pushes Event Tasks"
+    FastStreamWorker }|--|| RedisQueue : "Pops Background Tasks"
+    FastStreamWorker ||--|| MariaDB : "Reads / Updates DocTypes"
+    FastStreamWorker ||--|| RedisCache : "Caches Access Tokens"
+    FastStreamWorker }|--|| PrintroveAuthAPI : "POST /api/external/token"
+    FastStreamWorker }|--|| PrintroveDesignAPI : "POST /api/external/designs/url"
+    FastStreamWorker }|--|| PrintroveProductAPI : "POST /api/external/products"
+    FastStreamWorker }|--|| PrintroveServiceabilityAPI : "GET /api/external/serviceability"
+    FastStreamWorker }|--|| PrintroveOrderAPI : "POST /api/external/orders"
+
+    Nginx {
+        string role "Web Reverse Proxy & TLS Termination"
+        string port "80 / 443"
+    }
+
+    Gunicorn {
+        string runtime "Python 3.14 / Frappe WSGI Server"
+        string port "8000"
+    }
+
+    FastStreamWorker {
+        string runner "FastStream / frappe-controller worker"
+        string engine "AsyncIO Task Engine"
+    }
+
+    MariaDB {
+        string engine "MariaDB 10.6+ / Percona Server"
+        string port "3306"
+    }
+
+    RedisCache {
+        string engine "Redis 7.x Cache"
+        string port "13000"
+    }
+
+    RedisQueue {
+        string engine "Redis 7.x Queue / PubSub"
+        string port "11000"
+    }
+
+    PrintroveAuthAPI {
+        string endpoint "api.printrove.com/api/external/token"
+        string protocol "HTTPS / JSON"
+    }
+
+    PrintroveDesignAPI {
+        string endpoint "api.printrove.com/api/external/designs/url"
+        string protocol "HTTPS / JSON"
+    }
+
+    PrintroveProductAPI {
+        string endpoint "api.printrove.com/api/external/products"
+        string protocol "HTTPS / JSON"
+    }
+
+    PrintroveServiceabilityAPI {
+        string endpoint "api.printrove.com/api/external/serviceability"
+        string protocol "HTTPS / Query Params"
+    }
+
+    PrintroveOrderAPI {
+        string endpoint "api.printrove.com/api/external/orders"
+        string protocol "HTTPS / JSON"
+    }
+```
+
+### Contained Building Blocks (Level 1)
+- **Nginx**: Ingress and static asset server.
+- **Gunicorn**: WSGI server executing synchronous Frappe web requests.
+- **FastStreamWorker**: Background worker process managing event queues and orchestrating Printrove API tasks.
+- **MariaDB**: Relational transactional database store.
+- **RedisCache & RedisQueue**: In-memory caching and messaging infrastructure.
+
+---
+
+## Level 2: Component Breakdown
+Link to C3 Component Model: [C3 Component Diagram](../c4/03-component.md)
+
+```mermaid
+erDiagram
+    ItemHook ||--|| DesignJob : "enqueues on_update"
+    BOMHook ||--|| ProductJob : "enqueues on_submit"
+    SalesOrderHook ||--|| OrderJob : "enqueues on_submit"
+    PurchaseOrderHook ||--|| OrderJob : "enqueues on_update"
+    
+    DesignJob ||--|| ImageUtils : "converts format"
+    DesignJob ||--|| PrintroveClient : "calls create_design_from_url"
+    DesignJob ||--|| DesignUrlRequest : "constructs payload"
+    
+    ProductJob ||--|| PrintroveClient : "calls create_product"
+    ProductJob ||--|| ProductCreateRequest : "constructs payload"
+    
+    OrderJob ||--|| PrintroveClient : "calls get_serviceability & create_order"
+    OrderJob ||--|| ServiceabilityRequest : "constructs payload"
+    OrderJob ||--|| OrderCreateRequest : "constructs payload"
+    OrderJob ||--|| PrintroveSettings : "reads supplier & accounts"
+    
+    PrintroveClient ||--|| PrintroveSettings : "fetches credentials"
+    
+    ItemHook {
+        string module "frappe_printrove.printrove.doctype.item.item"
+        string event "on_update"
+    }
+
+    BOMHook {
+        string module "frappe_printrove.printrove.doctype.bom.bom"
+        string event "on_submit"
+    }
+
+    SalesOrderHook {
+        string module "frappe_printrove.printrove.doctype.sales_order.sales_order"
+        string event "on_submit"
+    }
+
+    PurchaseOrderHook {
+        string module "frappe_printrove.printrove.doctype.purchase_order.purchase_order"
+        string event "on_update"
+    }
+
+    DesignJob {
+        string function "frappe_printrove.jobs.design.create_design"
+        int rate_limit_per_minute 60
+        int retries 3
+    }
+
+    ProductJob {
+        string function "frappe_printrove.jobs.product.create_product"
+        int rate_limit_per_minute 60
+        int retries 3
+    }
+
+    OrderJob {
+        string orchestrator "frappe_printrove.jobs.order.process_printrove_purchase_order"
+        string helper "frappe_printrove.jobs.order.create_purchase_order"
+        int rate_limit_per_minute 30
+        int retries 5
+    }
+
+    ImageUtils {
+        string module "frappe_printrove.utils.image"
+        string function "ensure_supported_image_format"
+    }
+
+    PrintroveClient {
+        string module "frappe_printrove.client"
+        string class "PrintroveClient"
+    }
+
+    PrintroveSettings {
+        string doctype "Printrove Settings"
+        string role "Configuration & Credential Storage"
+    }
+
+    DesignUrlRequest {
+        string schema "frappe_printrove.schemas.design.DesignUrlRequest"
+    }
+
+    ProductCreateRequest {
+        string schema "frappe_printrove.schemas.product.ProductCreateRequest"
+    }
+
+    ServiceabilityRequest {
+        string schema "frappe_printrove.schemas.serviceability.ServiceabilityRequest"
+    }
+
+    OrderCreateRequest {
+        string schema "frappe_printrove.schemas.order.OrderCreateRequest"
+    }
+```
+
+### Important Interfaces (Level 2)
+
+1. **[`create_design(item_code: str) -> str`](apps/frappe_printrove/frappe_printrove/jobs/design.py:8)**:
+   - Ingests artwork from `Item`, normalizes image via [`ensure_supported_image_format`](apps/frappe_printrove/frappe_printrove/utils/image.py:9), uploads URL to Printrove, and returns generated design ID.
+2. **[`create_product(bom_name: str) -> str`](apps/frappe_printrove/frappe_printrove/jobs/product.py:8)**:
+   - Validates design IDs on BOM components, constructs placement coordinate vectors, registers custom product on Printrove, and returns product ID.
+3. **[`process_printrove_purchase_order(po_name: str) -> str`](apps/frappe_printrove/frappe_printrove/jobs/order.py:141)**:
+   - Orchestrates multi-step procurement: verifies item provisioning, calculates freight rates, checks wallet credit, creates external order, and submits the PO.
+4. **[`PrintroveClient`](apps/frappe_printrove/frappe_printrove/client.py:13)**:
+   - Encapsulates authentication token caching and all HTTP REST operations against `api.printrove.com`.
